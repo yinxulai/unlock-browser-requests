@@ -24,6 +24,11 @@ type response struct {
 }
 
 func requestHandler(w http.ResponseWriter, r *http.Request) {
+	// 设置允许跨域访问的源
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "*")
+
 	if r.Method != "POST" {
 		err := fmt.Errorf("Non-POST request received")
 		http.Error(w, err.Error(), http.StatusBadRequest)
