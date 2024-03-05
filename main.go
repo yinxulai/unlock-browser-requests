@@ -29,10 +29,14 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Headers", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "*")
 
+	// 跨域预检请求
+	if r.Method == "OPTIONS" {
+		return
+	}
+
 	if r.Method != "POST" {
 		err := fmt.Errorf("Non-POST request received")
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		log.Fatal(err)
 		return
 	}
 
