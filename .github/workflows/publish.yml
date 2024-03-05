@@ -1,0 +1,47 @@
+name: Create and publish a Docker image
+
+on:
+  release:
+    types: [published]
+# 配置此工作流以在每次将更改推送到名为 的分支时运行release。
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  # 为工作流定义两个自定义环境变量。它们用于容器注册表域以及此工作流程构建的 Docker 映像的名称。
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    # 此工作流程中有一个作业。它配置为在最新可用版本的 Ubuntu 上运行。
+
+    permissions:
+      contents: read
+      packages: write
+      # GITHUB_TOKEN设置授予此作业中的操作的权限。
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Log in to the Container registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          # 使用该docker/login-action操作，使用将发布包的帐户和密码登录容器注册表registry。发布后，包的范围仅限于此处定义的帐户。
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          # 此步骤使用docker/metadata-action提取将应用于指定映像的标签和标签。“id元”允许在后续步骤中引用此步骤的输出。该images值提供标记和标签的基本名称。
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
