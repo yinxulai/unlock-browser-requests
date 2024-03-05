@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -24,6 +25,9 @@ type response struct {
 
 func requestHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
+		err := fmt.Errorf("Non-POST request received")
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		log.Fatal(err)
 		return
 	}
 
@@ -31,12 +35,17 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&requestParams)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		log.Fatal(err)
 		return
 	}
+
+	log.Printf("Received a request: %s %s", requestParams.Method, requestParams.Url)
 
 	requestParamUrl, err := url.Parse(requestParams.Url)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		log.Fatal(err)
+		return
 	}
 
 	targetRequest := &http.Request{}
@@ -52,6 +61,8 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 	targetResponse, err := client.Do(targetRequest)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		log.Fatal(err)
+		return
 	}
 
 	var responseResult response
@@ -61,14 +72,19 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 	bytes, err := io.ReadAll(targetResponse.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		log.Fatal(err)
+		return
 	}
 	responseResult.Body = &bytes
 
 	responseResultBytes, err := json.Marshal(responseResult)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		log.Fatal(err)
+		return
 	}
 
+	log.Printf("Processed a request: %s %s", requestParams.Method, requestParams.Url)
 	if _, err := w.Write(responseResultBytes); err != nil {
 		log.Println("Failed to write response:", err)
 	}
