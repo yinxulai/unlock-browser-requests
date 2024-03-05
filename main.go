@@ -78,9 +78,11 @@ func main() {
 	// 注册请求处理函数
 	http.HandleFunc("/", requestHandler)
 
-	// 启动HTTP服务，监听在端口8080
+	// 启动 HTTP 服务，监听在端口808
+	log.Println("start the server on port 80")
 	err := http.ListenAndServe(":80", nil)
 	if err != nil {
 		log.Fatal("Failed to start the server:", err)
+		return
 	}
 }
