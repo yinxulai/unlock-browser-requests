@@ -9,13 +9,13 @@ import (
 
 const (
 	// Use in Response
-	OverwriteRequestUrl           = "http-agent-overwrite-request-url"      // example: http-agent-overwrite-request-url: https://example.com
-	ExposeResponseHeader          = "http-agent-expose-response-header"     // example: http-agent-expose-response-header: set-cookie
-	OverwriteRequestHeaderPrefix  = "http-agent-overwrite-request-header-"  // example: http-agent-overwrite-request-header:cookie: example-cookie=example
-	OverwriteResponseHeaderPrefix = "http-agent-overwrite-response-header-" // example: http-agent-overwrite-response-header:Access-Control-Allow-Origin: *
+	OverwriteRequestUrl           = "overwrite-request-url"      // example: overwrite-request-url: https://example.com
+	ExposeResponseHeader          = "expose-response-header"     // example: expose-response-header: set-cookie
+	OverwriteRequestHeaderPrefix  = "overwrite-request-header-"  // example: overwrite-request-header:cookie: example-cookie=example
+	OverwriteResponseHeaderPrefix = "overwrite-response-header-" // example: overwrite-response-header:Access-Control-Allow-Origin: *
 
 	// Use in Response
-	ExposedResponseHeader = "http-agent-exposed-response-header-" // 用于在 response 中暴露 ExposeResponseHeader 指定的 header
+	ExposedResponseHeader = "exposed-header-" // 用于在 response 中暴露 ExposeResponseHeader 指定的 header
 )
 
 type AgentOptions struct {
@@ -51,7 +51,7 @@ func ParseOptionsFormHeader(header *http.Header) *AgentOptions {
 
 				// OverwriteRequestHeader
 				if supportedOptionPrefix == OverwriteRequestHeaderPrefix {
-					if (agentOptions.OverwriteRequestHeader == nil) {
+					if agentOptions.OverwriteRequestHeader == nil {
 						agentOptions.OverwriteRequestHeader = make(map[string][]string)
 					}
 
@@ -61,7 +61,7 @@ func ParseOptionsFormHeader(header *http.Header) *AgentOptions {
 
 				// OverwriteResponseHeader
 				if supportedOptionPrefix == OverwriteResponseHeaderPrefix {
-					if (agentOptions.OverwriteResponseHeader == nil) {
+					if agentOptions.OverwriteResponseHeader == nil {
 						agentOptions.OverwriteResponseHeader = make(map[string][]string)
 					}
 
@@ -99,6 +99,7 @@ func AutoProxy(w http.ResponseWriter, request *http.Request) {
 		return
 	}
 
+	log.Printf("Received a request: %s %s, options: %v", request.Method, request.URL.String(), agentOptions)
 	agentRequest, err := http.NewRequestWithContext(request.Context(), request.Method, agentOptions.OverwriteRequestURL, request.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)

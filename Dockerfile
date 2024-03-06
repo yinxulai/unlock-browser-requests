@@ -14,7 +14,7 @@ RUN apk --no-cache add ca-certificates
 
 WORKDIR /root/
 
-EXPOSE 80
+EXPOSE 8080
 
 COPY --from=builder /workspace/main .
 
