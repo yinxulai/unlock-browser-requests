@@ -1,10 +1,10 @@
-# Http Agent
+# `Unlock browser requests`
 
-[Chinese Documentation](https://github.com/yinxulai/http-agent/blob/main/README_CN.md) | [English Documentation](https://github.com/yinxulai/http-agent/blob/main/README.md)
+[Chinese Documentation](https://github.com/yinxulai/unlock-browser-requests/blob/main/README_CN.md) | [English Documentation](https://github.com/yinxulai/unlock-browser-requests/blob/main/README.md)
 
-## What is Http Agent
+## What is `Unlock browser requests`
 
-Http Agent is a simple HTTP protocol proxy tool designed to be used in browsers. Its main purpose is to remove various security restrictions imposed by browsers. The main use cases are as follows:
+`Unlock browser requests` is a simple HTTP protocol proxy tool designed to be used in browsers. Its main purpose is to remove various security restrictions imposed by browsers. The main use cases are as follows:
 **The security restrictions of browsers are in place to ensure user data security, and in principle, they should not be bypassed. This program is only intended for special research scenarios.**
 
 - Cross-origin issues when frontend directly requests the service
@@ -13,7 +13,7 @@ Http Agent is a simple HTTP protocol proxy tool designed to be used in browsers.
 
 ## Usage
 
-Open-source service address: [https://http-agent.service.yinxulai.com/](https://http-agent.service.yinxulai.com/)
+Open-source service address: [https://unlock-browser-requests.service.yinxulai.com](https://unlock-browser-requests.service.yinxulai.com)
 
 ### overwrite-request-url
 

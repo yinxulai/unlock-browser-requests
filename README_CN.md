@@ -1,10 +1,10 @@
-# Http Agent
+# `Unlock browser requests`
 
-[中文文档](https://github.com/yinxulai/http-agent/blob/main/README_CN.md)|[英文文档](https://github.com/yinxulai/http-agent/blob/main/README.md)
+[中文文档](https://github.com/yinxulai/unlock-browser-requests/blob/main/README_CN.md)|[英文文档](https://github.com/yinxulai/unlock-browser-requests/blob/main/README.md)
 
-## 什么是 Http Agent
+## 什么是 `Unlock browser requests`
 
-Http Agent 是一个旨在浏览器中可用的简单 HTTP 协议代理工具，主要目的是解除浏览器的多种安全限制，主要的使用场景如下：
+`Unlock browser requests` 是一个旨在浏览器中可用的简单 HTTP 协议代理工具，主要目的是解除浏览器的多种安全限制，主要的使用场景如下：
 **浏览器的安全限制是为了用户数据安全，原则上不应该跳过该机制，本程序仅用于一些特殊的研究场景**
 
 - 前端直接请求服务的跨域问题
@@ -13,7 +13,7 @@ Http Agent 是一个旨在浏览器中可用的简单 HTTP 协议代理工具，
 
 ## Usage
 
-开源服务地址: [https://http-agent.service.yinxulai.com/](https://http-agent.service.yinxulai.com/)
+开源服务地址: [https://unlock-browser-requests.service.yinxulai.com](https://unlock-browser-requests.service.yinxulai.com)
 
 ### overwrite-request-url
 
