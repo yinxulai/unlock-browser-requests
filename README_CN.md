@@ -90,3 +90,11 @@
   //   exposed-header-content-type: "image/png"
   // }
 ```
+
+## Deploy
+
+建议你使用 `ContainerImage` 进行部署，我们有一个自动维护的镜像文件:
+
+```bash
+docker pull ghcr.io/yinxulai/unlock-browser-requests:latest
+```

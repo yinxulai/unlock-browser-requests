@@ -89,3 +89,11 @@ If you need to read certain response headers that are restricted by the browser,
   //   exposed-header-content-type: "image/png"
   // }
 ```
+
+## Deploy
+
+It is recommended to deploy using `ContainerImage`. We have an automatically maintained image file:
+
+```bash
+docker pull ghcr.io/yinxulai/unlock-browser-requests:latest
+```
