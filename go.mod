@@ -1,3 +1,3 @@
-module github.com/yinxulai/http-agent
+module github.com/yinxulai/unlock-browser-requests
 
 go 1.21
