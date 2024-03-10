@@ -2,28 +2,31 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
 const (
 	// Use in Response
-	OverwriteRequestUrl           = "overwrite-request-url"      // example: overwrite-request-url: https://example.com
-	ExposeResponseHeader          = "expose-response-header"     // example: expose-response-header: set-cookie
-	OverwriteRequestHeaderPrefix  = "overwrite-request-header-"  // example: overwrite-request-header:cookie: example-cookie=example
-	OverwriteResponseHeaderPrefix = "overwrite-response-header-" // example: overwrite-response-header:Access-Control-Allow-Origin: *
+	OverwriteRequestUrl           = "overwrite-request-url"          // example: overwrite-request-url: https://example.com
+	ExposeResponseHeader          = "expose-response-header"         // example: expose-response-header: set-cookie
+	OverwriteRequestHeaderPrefix  = "overwrite-request-header-"      // example: overwrite-request-header:cookie: example-cookie=example
+	OverwriteResponseHeaderPrefix = "overwrite-response-header-"     // example: overwrite-response-header:Access-Control-Allow-Origin: *
+	OverwriteResponseStatusCode   = "overwrite-response-status-code" // example: overwrite-response-status-code: 200
 
 	// Use in Response
 	ExposedResponseHeader = "exposed-header-" // 用于在 response 中暴露 ExposeResponseHeader 指定的 header
 )
 
 type AgentOptions struct {
-	OverwriteRequestURL     string
-	ExposeResponseHeader    []string
-	OverwriteRequestHeader  map[string][]string
-	OverwriteResponseHeader map[string][]string
+	OverwriteRequestURL         string
+	ExposeResponseHeader        []string
+	OverwriteResponseStatusCode *int
+	OverwriteRequestHeader      map[string][]string
+	OverwriteResponseHeader     map[string][]string
 }
 
 func ParseOptionsFormHeader(header *http.Header) *AgentOptions {
@@ -32,6 +35,7 @@ func ParseOptionsFormHeader(header *http.Header) *AgentOptions {
 	var supportedOptionPrefixList = []string{
 		OverwriteRequestUrl,
 		ExposeResponseHeader,
+		OverwriteResponseStatusCode,
 		OverwriteRequestHeaderPrefix,
 		OverwriteResponseHeaderPrefix,
 	}
@@ -48,6 +52,15 @@ func ParseOptionsFormHeader(header *http.Header) *AgentOptions {
 				// ExposeResponseHeader
 				if supportedOptionPrefix == ExposeResponseHeader {
 					agentOptions.ExposeResponseHeader = headerValues
+				}
+
+				// OverwriteResponseStatusCode
+				if supportedOptionPrefix == OverwriteResponseStatusCode {
+					if statusCode, err := strconv.Atoi(headerValues[0]); err == nil {
+						agentOptions.OverwriteResponseStatusCode = &statusCode
+					} else {
+						log.Print(err)
+					}
 				}
 
 				// OverwriteRequestHeader
@@ -140,7 +153,7 @@ func AutoProxy(w http.ResponseWriter, request *http.Request) {
 	}
 
 	// 读取响应体内容
-	body, err := ioutil.ReadAll(agentResponse.Body)
+	body, err := io.ReadAll(agentResponse.Body)
 	if err != nil {
 		log.Printf("Failed to read response body:", err)
 		return
@@ -156,7 +169,11 @@ func AutoProxy(w http.ResponseWriter, request *http.Request) {
 	}
 
 	// 设置响应状态码
-	w.WriteHeader(agentResponse.StatusCode)
+	if agentOptions.OverwriteResponseStatusCode != nil {
+		w.WriteHeader(*agentOptions.OverwriteResponseStatusCode)
+	} else {
+		w.WriteHeader(agentResponse.StatusCode)
+	}
 
 	// 将响应体写入到 ResponseWriter
 	if _, err = w.Write(body); err != nil {
