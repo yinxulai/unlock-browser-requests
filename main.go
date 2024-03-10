@@ -93,6 +93,14 @@ func ParseOptionsFormHeader(header *http.Header) *AgentOptions {
 }
 
 func AutoProxy(w http.ResponseWriter, request *http.Request) {
+	// 设置跨域
+	if request.Method == "OPTIONS" {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Headers", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "*")
+		return
+	}
+
 	agentOptions := ParseOptionsFormHeader(&request.Header)
 	log.Printf("Received a request: %v", agentOptions)
 
