@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"strings"
@@ -103,7 +104,7 @@ func AutoProxy(w http.ResponseWriter, request *http.Request) {
 	agentRequest, err := http.NewRequestWithContext(request.Context(), request.Method, agentOptions.OverwriteRequestURL, request.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		log.Fatal(err)
+		log.Print(err)
 		return
 	}
 
@@ -127,7 +128,7 @@ func AutoProxy(w http.ResponseWriter, request *http.Request) {
 	agentResponse, err := client.Do(agentRequest)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		log.Fatal(err)
+		log.Print(err)
 		return
 	}
 
@@ -148,9 +149,28 @@ func AutoProxy(w http.ResponseWriter, request *http.Request) {
 		}
 	}
 
-	// 将响应结果返回到 response
-	if err := agentResponse.Write(w); err != nil {
-		log.Fatal("Write response fatal:", err)
+	// 读取响应体内容
+	body, err := ioutil.ReadAll(agentResponse.Body)
+	if err != nil {
+		log.Printf("Failed to read response body:", err)
+		return
+	}
+
+	// 设置响应头
+	for key, values := range agentResponse.Header {
+		for _, value := range values {
+			// 将响应头写入到 ResponseWriter
+			// 这里假设你已经有一个 http.ResponseWriter 对象，命名为 "w"
+			w.Header().Add(key, value)
+		}
+	}
+
+	// 设置响应状态码
+	w.WriteHeader(agentResponse.StatusCode)
+
+	// 将响应体写入到 ResponseWriter
+	if _, err = w.Write(body); err != nil {
+		log.Printf("Failed to read response body:", err)
 	}
 }
 
