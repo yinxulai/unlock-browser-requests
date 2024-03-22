@@ -1,5 +1,7 @@
 # `Unlock browser requests`
 
+[![Create and publish a Docker image](https://github.com/yinxulai/unlock-browser-requests/actions/workflows/publish.yml/badge.svg)](https://github.com/yinxulai/unlock-browser-requests/actions/workflows/publish.yml)
+
 [Chinese Documentation](https://github.com/yinxulai/unlock-browser-requests/blob/main/README_CN.md) | [English Documentation](https://github.com/yinxulai/unlock-browser-requests/blob/main/README.md)
 
 ## What is `Unlock browser requests`
